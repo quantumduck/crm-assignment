@@ -67,13 +67,13 @@ class Contact
     @@contacts.each do |ct|
       case key
       when :first_name
-        return ct if first_name == value
+        return ct if ct.first_name == value
       when :last_name
-        return ct if last_name == value
+        return ct if ct.last_name == value
       when :email
-        return ct if email == value
+        return ct if ct.email == value
       when :note
-        return ct if note.include?(value)
+        return ct if ct.note.include?(value)
       else
         return nil
       end
