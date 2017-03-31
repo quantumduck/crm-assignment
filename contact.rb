@@ -35,7 +35,7 @@ class Contact
   # This method should accept an id as an argument
   # and return the contact who has that id
   def self.find(id)
-    @@contacts.each { |ct| return ct if ct.id == id}
+    @@contacts.each { |ct| return ct if ct.id == id }
     return nil
   end
 
@@ -44,20 +44,45 @@ class Contact
   # 2. the new value for that attribute
   # and then make the appropriate change to the contact
   def update(key, value)
-
+    case key
+    when :first_name
+      @first_name = value
+    when :last_name
+      @last_name = value
+    when :email
+      @email = value
+    when :note
+      @note = value
+    else
+      return false
+    end
+    true
   end
 
   # This method should work similarly to the find method above
   # but it should allow you to search for a contact using attributes other than id
   # by specifying both the name of the attribute and the value
   # eg. searching for 'first_name', 'Betty' should return the first contact named Betty
-  def self.find_by
-
+  def self.find_by(key, value)
+    @@contacts.each do |ct|
+      case key
+      when :first_name
+        return ct if first_name == value
+      when :last_name
+        return ct if last_name == value
+      when :email
+        return ct if email == value
+      when :note
+        return ct if note.include?(value)
+      else
+        return nil
+      end
+    end
   end
 
   # This method should delete all of the contacts
   def self.delete_all
-
+    @@contacts = []
   end
 
   def full_name
@@ -67,7 +92,8 @@ class Contact
   # This method should delete the contact
   # HINT: Check the Array class docs for built-in methods that might be useful here
   def delete
-
+    @@contacts.delete(self) { return false }
+    true
   end
 
   # Feel free to add other methods here, if you need them.
