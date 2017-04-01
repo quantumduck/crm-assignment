@@ -2,11 +2,31 @@ require 'io/console'
 
 class UI
 
+  @@keyL = "\e[D"
+  @@keyR = "\e[C"
+  @@keyU = "\e[A"
+  @@keyD = "\e[B"
+  @@min_width = 16
+  @@min_height = 6
+
   attr_reader :max_width, :max_height
 
   def initialize
     @max_height, @max_width = $stdin.winsize
     # puts "Your screen is #{max_width} wide and #{max_height} tall"
+    # Warn if the screen is shorter than hard coded lines.
+    if (@max_width < @@min_width)
+      puts "Warning: Your screen is less than #{@@min_width} characters wide."
+      puts "Resize window if possible and then press [Enter]"
+      gets
+      @max_height, @max_width = $stdin.winsize
+    end
+    if (@max_height < @@min_height)
+      puts "Warning: Your screen is less than #{@@min_height} characters high."
+      puts "Resize window if possible and then press [Enter]"
+      gets
+      @max_height, @max_width = $stdin.winsize
+    end
   end
 
   def print_menu(title, items, start_at = 0)
@@ -17,11 +37,13 @@ class UI
       padright = padding - padleft
       title = (' ' * padleft) + title + (' ' * padright)
     end
-
     # if starting at higher index, indicate scrolling option:
     if (start_at > 0)
       items = items[start_at, items.length - start_at]
-      puts "** ^^" + ('*' * (max_width - 8)) + "^^ **"
+      puts "***Scroll*[U]p" + ('*' * (max_width - 14))
+    else
+      puts '*' * (max_width)
+    end
     print_menu_item(title)
     puts '*' * max_width
     # Print as many items as will fit on screen.
@@ -36,10 +58,11 @@ class UI
       items.each { |item| print_menu_item(item) }
       puts '*' * max_width
     else
-      lines_left.times
+      # Print as many lines as will fit and indicate
+      # scrolling option.
+      lines_left.times { |i| print_menu_item(items[i]) }
+      puts "***Scroll*[D]own" + ('*' * (max_width - 16))
     end
-
-
   end
 
 
