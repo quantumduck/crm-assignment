@@ -29,40 +29,47 @@ class UI
     end
   end
 
-  def print_menu(title, items, start_at = 0)
+  def print_menu(title, items, start_at = 0, height = (max_height - 5))
+    if ((height.to_i <= 0) || (height.to_i > (max_height - 5)))
+      height = max_height - 5
+    else
+      heihgt = height.to_i
+    end
     # Centre the title
-    padding = title.to_s.length < (max_width - 6)
+    padding = (max_width - 6) - title.to_s.length
     if (padding > 0)
       padleft = padding / 2
       padright = padding - padleft
       title = (' ' * padleft) + title + (' ' * padright)
     end
+    # Print menu title:
+    puts '*' * max_width
+    print_menu_item(title)
     # if starting at higher index, indicate scrolling option:
-    if (start_at > 0)
-      items = items[start_at, items.length - start_at]
+    if (start_at.to_i > 0)
+      items = items[start_at, items.length - start_at.to_i]
       puts "***Scroll*[U]p" + ('*' * (max_width - 14))
     else
       puts '*' * (max_width)
     end
-    print_menu_item(title)
-    puts '*' * max_width
     # Print as many items as will fit on screen.
-    lines_left = ((max_height - 5) - items.to_a.length)
+    lines_left = (height - items.to_a.length)
     if lines_left >= 1
       # Print the whole menu + bottom border and padding
       items.each { |item| print_menu_item(item) }
       puts '*' * max_width
       lines_left.times { puts }
-    elsif lines left == 0
+    elsif lines_left == 0
       # Print the whole menu + bottom border
       items.each { |item| print_menu_item(item) }
       puts '*' * max_width
     else
       # Print as many lines as will fit and indicate
       # scrolling option.
-      lines_left.times { |i| print_menu_item(items[i]) }
+      height.times { |i| print_menu_item(items[i]) }
       puts "***Scroll*[D]own" + ('*' * (max_width - 16))
     end
+    lines_left
   end
 
 
@@ -84,16 +91,30 @@ class UI
     puts line
   end
 
-  def get_hash(keys)
-
+  def get_hash(keys, names = nil)
+    hash = {}
+    # Expect keys to be an array.
+    if (prompts.length == keys.length)
+      keys.length.times { |i| hash.store(keys[i], get_value(prompts[i])) }
+    else
+      keys.each { |k| hash.store(k, get_value) }
+    end
+    hash
   end
 
-  def print_error
-
+  def print_error(error)
+    puts "ERROR: " + error.to_s
+    puts "Press Enter to continue."
+    gets
   end
 
-  def get_value(key, name = nil)
-
+  def get_value(name = nil)
+    if (name == nil)
+      puts "Please enter desired input:"
+    else
+      puts "#{name.to_s} = ?"
+    end
+    gets
   end
 
 
