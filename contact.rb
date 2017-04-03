@@ -53,6 +53,14 @@ class Contact
       @email = value
     when :note
       @note = value
+    when "first_name"
+      @first_name = value
+    when "last_name"
+      @last_name = value
+    when "email"
+      @email = value
+    when "note"
+      @note = value
     else
       return false
     end
@@ -74,8 +82,16 @@ class Contact
         return ct if ct.email == value
       when :note
         return ct if ct.note.include?(value)
+      when "first_name"
+        return ct if ct.first_name == value
+      when "last_name"
+        return ct if ct.last_name == value
+      when "email"
+        return ct if ct.email == value
+      when "note"
+        @note = value
       else
-        return nil
+        return ct if ct.note.include?(value)
       end
     end
   end
